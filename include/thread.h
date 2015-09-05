@@ -2,7 +2,7 @@
 #pragma once
 
 #include <exception>
-
+#include <system_error>
 
 
 #ifdef _WIN32
@@ -97,7 +97,7 @@ inline void join(thread thread)
 
 	CloseHandle(thread);
 
-#else 
+#else
 
 	auto error = pthread_join(thread, nullptr);
 	if (error)

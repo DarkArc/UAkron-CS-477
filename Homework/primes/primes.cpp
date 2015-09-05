@@ -4,6 +4,7 @@
 #include "stdafx.h"
 
 #include <iostream>
+#include "../../include/thread.h"
 
 
 bool is_prime(int n)
