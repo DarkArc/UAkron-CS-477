@@ -5,6 +5,8 @@
 
 #pragma once
 
+#ifdef _WIN32
+
 #include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN
@@ -13,5 +15,10 @@
 #include <stdio.h>
 #include <tchar.h>
 
+#else
+
+#include <cstring>
+
+#endif
 
 // TODO: reference additional headers your program requires here
