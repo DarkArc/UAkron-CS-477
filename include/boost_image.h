@@ -64,10 +64,10 @@ inline void save_png(const matrix& matX, const std::string & path) {
   auto img = boost::gil::gray8_image_t(boost::gil::gray8_image_t::point_t(matX.cols, matX.rows));
   auto view = boost::gil::view(img);
 
-  for (int y = 0; y < matX.rows; ++y) {
+  for (unsigned int y = 0; y < matX.rows; ++y) {
     auto x_itr = view.row_begin(y);
 
-    for (int x = 0; x < matX.cols; ++x) {
+    for (unsigned int x = 0; x < matX.cols; ++x) {
       x_itr[x] = imgData[curPos++];
     }
   }
