@@ -29,8 +29,9 @@ int main()
   try {
     for (int i = 0; i < threadCount; ++i) {
       threads.push_back(
-        create_thread([i, threadUnit]{
-          for (int k = i * threadUnit; k < (i + 1) * threadUnit; ++k) {
+        create_thread(
+          [i, threadUnit] {
+            for (int k = i * threadUnit; k < (i + 1) * threadUnit; ++k) {
               if (is_prime(k))
               {
                 printf("%d\n", k);
