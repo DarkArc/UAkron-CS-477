@@ -15,11 +15,11 @@
 #include <boost/gil/image_view_factory.hpp>
 
 inline matrix convert_img(const boost::gil::gray8_image_t& img) {
-  matrix x;
-  x.create(img.height(), img.width());
+  matrix matX;
+  matX.create(img.height(), img.width());
 
   auto view = boost::gil::const_view(img);
-  auto imgData = x.data;
+  auto imgData = matX.data;
 
   int curPos = 0;
 
@@ -31,7 +31,7 @@ inline matrix convert_img(const boost::gil::gray8_image_t& img) {
     }
   }
 
-  return x;
+  return matX;
 }
 
 inline matrix load_image(const std::string& path) {
@@ -39,16 +39,16 @@ inline matrix load_image(const std::string& path) {
   std::regex pngRegex(".*\\.png$");
   std::regex jpegRegex(".*\\.jpg$");
 
-  if (std::regex_match(path, pngRegex)) {
+  if (std::regex_match(path, jpegRegex)) {
     boost::gil::gray8_image_t input;
-    boost::gil::jpeg_read_image(path, input);
+    boost::gil::jpeg_read_and_convert_image(path, input);
 
     return convert_img(input);
   }
 
-  if (std::regex_match(path, jpegRegex)) {
+  if (std::regex_match(path, pngRegex)) {
     boost::gil::gray8_image_t input;
-    boost::gil::png_read_image(path, input);
+    boost::gil::png_read_and_convert_image(path, input);
 
     return convert_img(input);
   }
@@ -56,6 +56,20 @@ inline matrix load_image(const std::string& path) {
   throw std::runtime_error("Illegal image format");
 }
 
-inline void save_png(const matrix& x, const std::string & path) {
-  throw std::runtime_error("Not yet implemented.");
+inline void save_png(const matrix& matX, const std::string & path) {
+  auto imgData = matX.data;
+
+  int curPos = 0;
+
+  auto img = boost::gil::gray8_image_t(boost::gil::gray8_image_t::point_t(matX.cols, matX.rows));
+  auto view = boost::gil::view(img);
+
+  for (int y = 0; y < matX.rows; ++y) {
+    auto x_itr = view.row_begin(y);
+
+    for (int x = 0; x < matX.cols; ++x) {
+      x_itr[x] = imgData[curPos++];
+    }
+  }
+  boost::gil::png_write_view(path, view);
 }

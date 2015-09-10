@@ -103,14 +103,14 @@ matrix binomial(int n)
 
 int main()
 {
-	auto bmp = load_image("C:\\Dev\\2015\\90.jpg");
+	auto bmp = load_image("test.png");
 	auto orig = bmp;
 
 	matrix kernel = binomial(3);
 
 	conv(bmp, kernel);
 
-	save_png(bmp, "C:\\Dev\\2015\\test.png");
+	save_png(bmp, "test.out.png");
 
     return 0;
 }
