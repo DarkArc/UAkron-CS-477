@@ -7,10 +7,7 @@
 #include "../../include/image.h"
 
 
-
-
-void conv(matrix &x, const matrix &k)
-{
+matrix obtainY(const matrix& x, const matrix& k) {
 	matrix y;
 	y.create(x.rows + k.rows, x.cols + k.cols);
 
@@ -24,7 +21,10 @@ void conv(matrix &x, const matrix &k)
 		}
 	}
 
-	// Compute sum of k
+	return y;
+}
+
+int computeWeight(const matrix& k) {
 	int weight = 0;
 	for (unsigned row = 0; row < k.rows; row++)
 	{
@@ -33,34 +33,51 @@ void conv(matrix &x, const matrix &k)
 			weight += k(row, col);
 		}
 	}
+	return weight;
+}
 
-	// Do the convolution
+void completeConv(const int& row, const int& col, const int& weight, const matrix& k, const matrix& y, matrix& x) {
+	int t = 0;
+
+	auto yrow = row - k.rows / 2 + 1;
+	for (int krow = k.rows - 1; krow >= 0; krow--, yrow++)
+	{
+		auto ycol = col - k.cols / 2 + 1;
+		for (int kcol = k.cols - 1; kcol >= 0; kcol--, ycol++)
+		{
+			t += y(yrow, ycol) * k(krow, kcol);
+		}
+	}
+
+	if (weight != 0)
+	{
+		t /= weight;
+	}
+
+	x(row, col) = t;
+}
+
+void completeConv(const int& weight, const matrix& k, const matrix& y, matrix& x) {
 	for (unsigned row = 0; row < x.rows; row++)
 	{
 		for (unsigned col = 0; col < x.cols; col++)
 		{
-			int t = 0;
-
-			auto yrow = row - k.rows / 2 + 1;
-			for (int krow = k.rows - 1; krow >= 0; krow--, yrow++)
-			{
-				auto ycol = col - k.cols / 2 + 1;
-				for (int kcol = k.cols - 1; kcol >= 0; kcol--, ycol++)
-				{
-					t += y(yrow, ycol) * k(krow, kcol);
-				}
-			}
-
-			if (weight != 0)
-			{
-				t /= weight;
-			}
-
-			x(row, col) = t;
+			completeConv(row, col, weight, k, y, x);
 		}
 	}
+}
 
+void conv(matrix &x, const matrix &k)
+{
+	// std::vector<thread> threads;
 
+	matrix y = obtainY(x, k);
+
+	// Compute sum of k
+	int weight = computeWeight(k);
+
+	// Do the convolution
+	completeConv(weight, k, y, x);
 }
 
 
