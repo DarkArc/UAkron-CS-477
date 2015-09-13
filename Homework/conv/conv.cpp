@@ -3,9 +3,17 @@
 
 #include "stdafx.h"
 
+#include <memory>
+
 #include "../../include/thread.h"
 #include "../../include/image.h"
 
+template <typename T>
+void joinThreads(T& threads) {
+	for (auto&& thread : threads) {
+		join(thread);
+	}
+}
 
 matrix obtainY(const matrix& x, const matrix& k) {
 	matrix y;
@@ -58,23 +66,53 @@ void completeConv(const int& row, const int& col, const int& weight, const matri
 }
 
 void completeConv(const int& weight, const matrix& k, const matrix& y, matrix& x) {
-	for (unsigned row = 0; row < x.rows; row++)
-	{
-		for (unsigned col = 0; col < x.cols; col++)
-		{
-			completeConv(row, col, weight, k, y, x);
-		}
+	const int threadCount = 8;
+	const int threadUnit = x.rows / threadCount;
+
+	std::vector<thread> threads;
+	for (unsigned int thread = 0; thread < threadCount; ++thread) {
+		threads.push_back(
+			create_thread(
+				[&weight, &k, &y, &x, &threadUnit, thread] {
+					for (unsigned int row = threadUnit * thread; row < threadUnit * (thread + 1); ++row) {
+						for (unsigned int col = 0; col < x.cols; ++col) {
+							completeConv(row, col, weight, k, y, x);
+						}
+					}
+				}
+			)
+		);
 	}
+
+	joinThreads(threads);
 }
 
 void conv(matrix &x, const matrix &k)
 {
-	// std::vector<thread> threads;
+	std::vector<thread> threads;
 
-	matrix y = obtainY(x, k);
+	matrix y;
+
+	threads.push_back(
+		create_thread(
+			[&] {
+				y = obtainY(x, k);
+			}
+		)
+	);
 
 	// Compute sum of k
-	int weight = computeWeight(k);
+	int weight;
+
+	threads.push_back(
+		create_thread(
+			[&] {
+				weight = computeWeight(k);
+			}
+		)
+	);
+
+	joinThreads(threads);
 
 	// Do the convolution
 	completeConv(weight, k, y, x);
