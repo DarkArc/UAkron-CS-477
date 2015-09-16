@@ -38,8 +38,7 @@ int main() {
             std::vector<int> vec;
 
             for (int k = i * threadUnit; k < (i + 1) * threadUnit; ++k) {
-              if (is_prime(k))
-              {
+              if (is_prime(k)) {
                 vec.push_back(k);
               }
             }
