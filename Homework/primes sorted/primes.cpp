@@ -3,13 +3,10 @@
 
 #include "stdafx.h"
 
-#include <algorithm>
-#include <map>
 #include <vector>
 #include <iostream>
 
 #include "../../include/thread.h"
-#include "../../include/mutex.h"
 
 bool is_prime(int n) {
   auto j = static_cast<int>(sqrt(n));
