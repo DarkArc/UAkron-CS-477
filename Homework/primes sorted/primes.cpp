@@ -26,28 +26,20 @@ int main() {
   const int threadUnit = elements / threadCount;
 
   std::vector<thread> threads;
-
-  mutex primesMapMutex;
-  std::map<int, std::vector<int>> primesMap;
+  std::vector<std::vector<int>> primesVec(threadCount);
 
   try {
     for (int i = 0; i < threadCount; ++i) {
       threads.push_back(
         create_thread(
-          [i, &threadUnit, &primesMap, &primesMapMutex] {
-            std::vector<int> vec;
+          [i, &threadUnit, &primesVec] {
+            std::vector<int>& vec = primesVec[i];
 
             for (int k = i * threadUnit; k < (i + 1) * threadUnit; ++k) {
               if (is_prime(k)) {
                 vec.push_back(k);
               }
             }
-
-            std::sort(vec.begin(), vec.end());
-
-            primesMapMutex.lock();
-            primesMap[vec[0]] = vec;
-            primesMapMutex.unlock();
           }
         )
       );
@@ -57,9 +49,9 @@ int main() {
       join(thread);
     }
 
-    for (auto& entry : primesMap) {
-      for (auto& primeNum : entry.second) {
-        std::cout << primeNum << std::endl;
+    for (auto&& vec : primesVec) {
+      for (auto&& entry : vec) {
+        std::cout << entry << std::endl;
       }
     }
   } catch (std::system_error &ex) {
