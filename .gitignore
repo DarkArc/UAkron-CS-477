@@ -3,6 +3,7 @@ build/
 
 # Visual Studio Stuff
 .vs/
+Release/
 Debug/
 
 # Compiled Object files
