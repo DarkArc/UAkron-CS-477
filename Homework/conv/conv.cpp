@@ -3,19 +3,13 @@
 
 #include "stdafx.h"
 
+#include <thread>
 #include <memory>
 
 #include "../../class-common/include/thread.h"
 #include "../../class-common/include/image.h"
 
 using namespace cs477;
-
-template <typename T>
-void joinThreads(T& threads) {
-	for (auto&& thread : threads) {
-		join(thread);
-	}
-}
 
 matrix obtainY(const matrix& x, const matrix& k) {
 	matrix y;
@@ -68,53 +62,30 @@ void completeConv(const int& row, const int& col, const int& weight, const matri
 }
 
 void completeConv(const int& weight, const matrix& k, const matrix& y, matrix& x) {
-	const int threadCount = 8;
+	const int threadCount = std::thread::hardware_concurrency();
 	const int threadUnit = x.rows / threadCount;
 
-	std::vector<thread> threads;
+	std::vector<future<void>> futures;
 	for (unsigned int thread = 0; thread < threadCount; ++thread) {
-		threads.push_back(
-			create_thread(
-				[&weight, &k, &y, &x, &threadUnit, thread] {
-					for (unsigned int row = threadUnit * thread; row < threadUnit * (thread + 1); ++row) {
-						for (unsigned int col = 0; col < x.cols; ++col) {
-							completeConv(row, col, weight, k, y, x);
-						}
-					}
-				}
-			)
-		);
+		auto future = queue_work([&weight, &k, &y, &x, &threadUnit, thread] {
+		  for (unsigned int row = threadUnit * thread; row < threadUnit * (thread + 1); ++row) {
+			  for (unsigned int col = 0; col < x.cols; ++col) {
+				  completeConv(row, col, weight, k, y, x);
+			  }
+		  }
+		});
+    futures.push_back(std::move(future));
 	}
 
-	joinThreads(threads);
+  when_all(futures.begin(), futures.end()).get();
 }
 
 void conv(matrix &x, const matrix &k)
 {
-	std::vector<thread> threads;
-
-	matrix y;
-
-	threads.push_back(
-		create_thread(
-			[&] {
-				y = obtainY(x, k);
-			}
-		)
-	);
+	matrix y = obtainY(x, k);
 
 	// Compute sum of k
-	int weight;
-
-	threads.push_back(
-		create_thread(
-			[&] {
-				weight = computeWeight(k);
-			}
-		)
-	);
-
-	joinThreads(threads);
+	int weight= computeWeight(k);
 
 	// Do the convolution
 	completeConv(weight, k, y, x);
