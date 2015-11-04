@@ -5,8 +5,10 @@
 
 #include <memory>
 
-#include "../../include/thread.h"
-#include "../../include/image.h"
+#include "../../class-common/include/thread.h"
+#include "../../class-common/include/image.h"
+
+using namespace cs477;
 
 template <typename T>
 void joinThreads(T& threads) {

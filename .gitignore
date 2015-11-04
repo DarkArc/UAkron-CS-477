@@ -1,6 +1,10 @@
 # Build dir
 build/
 
+# Visual Studio Stuff
+.vs/
+Debug/
+
 # Compiled Object files
 *.slo
 *.lo
