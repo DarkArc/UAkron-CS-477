@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 
+#include <thread>
 #include <vector>
 #include <iostream>
 
@@ -20,33 +21,28 @@ bool is_prime(int n) {
 
 
 int main() {
-  const int threadCount = 8;
-  const int elements = 1000000;
-  const int threadUnit = elements / threadCount;
+  const unsigned int threadCount = std::thread::hardware_concurrency();
+  const unsigned int elements = 1'000'000;
+  const unsigned int threadUnit = elements / threadCount;
 
-  std::vector<thread> threads;
+  std::vector<future<void>> futures;
   std::vector<std::vector<int>> primesVec(threadCount);
 
   try {
-    for (int i = 0; i < threadCount; ++i) {
-      threads.push_back(
-        create_thread(
-          [i, &threadUnit, &primesVec] {
-            std::vector<int>& vec = primesVec[i];
+    for (unsigned int i = 0; i < threadCount; ++i) {
+      auto future = queue_work([i, &threadUnit, &primesVec] {
+	      std::vector<int>& vec = primesVec[i];
 
-            for (int k = i * threadUnit; k < (i + 1) * threadUnit; ++k) {
-              if (is_prime(k)) {
-                vec.push_back(k);
-              }
-            }
+	      for (unsigned int k = i * threadUnit; k < (i + 1) * threadUnit; ++k) {
+          if (is_prime(k)) {
+            vec.push_back(k);
           }
-        )
-      );
+	      }
+      });
+      futures.push_back(std::move(future));
     }
 
-    for (auto&& thread : threads) {
-      join(thread);
-    }
+    when_all(futures.begin(), futures.end());
 
     for (auto&& vec : primesVec) {
       for (auto&& entry : vec) {
