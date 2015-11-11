@@ -24,7 +24,7 @@ int main() {
   using FutureOfPrimes = future<std::vector<int>>;
 
   const unsigned int threadCount = std::thread::hardware_concurrency();
-  const unsigned int elements = 100'000'000;
+  const unsigned int elements = 1'000'000;
   const unsigned int threadUnit = elements / threadCount;
 
   std::vector<FutureOfPrimes> futures;

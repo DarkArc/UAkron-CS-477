@@ -25,7 +25,7 @@ void print(const std::vector<int>& vec) {
 
 int main()
 {
-  const int numToGen = 100'000'000;
+  const int numToGen = 200'000'000;
   std::vector<int> toSort(numToGen);
 
   populate(toSort);

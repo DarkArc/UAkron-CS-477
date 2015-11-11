@@ -14,7 +14,7 @@ namespace {
     std::size_t mid = (begin + end) / 2;
 
     future<void> splitWork;
-    if (mid - begin >= 100000) {
+    if (mid - begin >= 10'000'000) {
       splitWork = queue_work([&toSort, &temp, begin, end, mid] {
         ::intern_sort(toSort, temp, begin, mid);
       });
