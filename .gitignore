@@ -6,6 +6,8 @@ build/
 Release/
 Debug/
 ipch/
+*.opensdf
+*.sdf
 
 # Compiled Object files
 *.slo
