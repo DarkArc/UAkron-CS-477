@@ -9,13 +9,20 @@ namespace {
 
   void intern_sort(std::vector<int>& toSort, std::vector<int>& temp, const std::size_t& begin, const std::size_t& end) {
 
-    if (begin == end) return;
+    if (begin >= end) return;
 
     std::size_t mid = (begin + end) / 2;
 
-    auto splitWork = queue_work([&toSort, &temp, begin, end, mid] {
+    future<void> splitWork;
+    if (mid - begin >= 100000) {
+      splitWork = queue_work([&toSort, &temp, begin, end, mid] {
+        ::intern_sort(toSort, temp, begin, mid);
+      });
+    }
+    else {
       ::intern_sort(toSort, temp, begin, mid);
-    });
+      splitWork = make_ready_future();
+    }
     ::intern_sort(toSort, temp, mid + 1, end);
 
     splitWork.wait();

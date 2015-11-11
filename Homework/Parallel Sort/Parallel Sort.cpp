@@ -25,16 +25,16 @@ void print(const std::vector<int>& vec) {
 
 int main()
 {
-  const int numToGen = 1000;
+  const int numToGen = 100'000'000;
   std::vector<int> toSort(numToGen);
 
   populate(toSort);
   std::cout << "Original" << std::endl;
-  print(toSort);
+  //print(toSort);
 
   sort(toSort);
   std::cout << "Final" << std::endl;
-  print(toSort);
+  //print(toSort);
 
   system("pause");
 
