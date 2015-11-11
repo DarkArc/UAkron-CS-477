@@ -5,6 +5,7 @@ build/
 .vs/
 Release/
 Debug/
+ipch/
 
 # Compiled Object files
 *.slo

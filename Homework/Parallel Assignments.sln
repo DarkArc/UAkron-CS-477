@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Primes", "primes\Primes.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hello World", "Hello World\Hello World.vcxproj", "{B8126988-8131-4F83-A5DD-9831A9FF9119}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Parallel Sort", "Parallel Sort\Parallel Sort.vcxproj", "{559D13B5-59C8-491E-8E08-BDAD3BEC8B9C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{B8126988-8131-4F83-A5DD-9831A9FF9119}.Release|x64.Build.0 = Release|x64
 		{B8126988-8131-4F83-A5DD-9831A9FF9119}.Release|x86.ActiveCfg = Release|Win32
 		{B8126988-8131-4F83-A5DD-9831A9FF9119}.Release|x86.Build.0 = Release|Win32
+		{559D13B5-59C8-491E-8E08-BDAD3BEC8B9C}.Debug|x64.ActiveCfg = Debug|x64
+		{559D13B5-59C8-491E-8E08-BDAD3BEC8B9C}.Debug|x64.Build.0 = Debug|x64
+		{559D13B5-59C8-491E-8E08-BDAD3BEC8B9C}.Debug|x86.ActiveCfg = Debug|Win32
+		{559D13B5-59C8-491E-8E08-BDAD3BEC8B9C}.Debug|x86.Build.0 = Debug|Win32
+		{559D13B5-59C8-491E-8E08-BDAD3BEC8B9C}.Release|x64.ActiveCfg = Release|x64
+		{559D13B5-59C8-491E-8E08-BDAD3BEC8B9C}.Release|x64.Build.0 = Release|x64
+		{559D13B5-59C8-491E-8E08-BDAD3BEC8B9C}.Release|x86.ActiveCfg = Release|Win32
+		{559D13B5-59C8-491E-8E08-BDAD3BEC8B9C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
