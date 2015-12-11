@@ -12,7 +12,7 @@ namespace cs477 {
     void sort(const ItType& begin, const ItType& end) {
       auto mid = std::next(begin, std::distance(begin, end) / 2);
 
-      if (std::distance(begin, mid) >= 10'00) {
+      if (std::distance(begin, mid) >= 10'000'000) {
         // Do one half of the work on annother thread, while continuing to use
         // the current thread
         future<void> splitWork = queue_work([begin, mid] {
