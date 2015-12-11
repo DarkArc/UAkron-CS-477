@@ -32,7 +32,7 @@ int main()
   std::cout << "Original" << std::endl;
   //print(toSort);
 
-  sort(toSort);
+  cs477::sort(toSort.begin(), toSort.end());
   std::cout << "Final" << std::endl;
   //print(toSort);
 
