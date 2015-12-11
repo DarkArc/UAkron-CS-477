@@ -25,7 +25,7 @@ void print(const std::vector<int>& vec) {
 
 int main()
 {
-  const int numToGen = 200'000'000;
+  const int numToGen = 200'00;
   std::vector<int> toSort(numToGen);
 
   populate(toSort);
@@ -34,7 +34,7 @@ int main()
 
   cs477::sort(toSort.begin(), toSort.end());
   std::cout << "Final\n";
-  //print(toSort);
+  print(toSort);
 
   system("pause");
 
