@@ -20,7 +20,7 @@ void print(const std::vector<int>& vec) {
     std::cout << entry;
     first = false;
   }
-  std::cout << std::endl;
+  std::cout << '\n';
 }
 
 int main()
@@ -29,11 +29,11 @@ int main()
   std::vector<int> toSort(numToGen);
 
   populate(toSort);
-  std::cout << "Original" << std::endl;
+  std::cout << "Original\n";
   //print(toSort);
 
   cs477::sort(toSort.begin(), toSort.end());
-  std::cout << "Final" << std::endl;
+  std::cout << "Final\n";
   //print(toSort);
 
   system("pause");
