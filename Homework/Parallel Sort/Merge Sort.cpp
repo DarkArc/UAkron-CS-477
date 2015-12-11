@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Merge Sort.hpp"
 
+#include <algorithm>
+
 using namespace cs477;
 
 namespace {
@@ -8,26 +10,29 @@ namespace {
   void merge(std::vector<int>&, std::vector<int>&, const std::size_t&, const std::size_t&, const std::size_t&);
 
   void intern_sort(std::vector<int>& toSort, std::vector<int>& temp, const std::size_t& begin, const std::size_t& end) {
-
-    if (begin >= end) return;
-
     std::size_t mid = (begin + end) / 2;
 
-    future<void> splitWork;
     if (mid - begin >= 10'000'000) {
-      splitWork = queue_work([&toSort, &temp, begin, end, mid] {
+      // Do one half of the work on annother thread, while continuing to use
+      // the current thread
+      future<void> splitWork = queue_work([&toSort, &temp, begin, end, mid] {
         ::intern_sort(toSort, temp, begin, mid);
       });
-    }
-    else {
-      ::intern_sort(toSort, temp, begin, mid);
-      splitWork = make_ready_future();
-    }
-    ::intern_sort(toSort, temp, mid + 1, end);
+      ::intern_sort(toSort, temp, mid + 1, end);
 
-    splitWork.wait();
+      splitWork.wait();
 
-    ::merge(toSort, temp, begin, mid + 1, end);
+      ::merge(toSort, temp, begin, mid + 1, end);
+    } else {
+      // Create adjusted iterators for std::sort
+      auto beginIt = toSort.begin();
+      std::advance(beginIt, begin);
+
+      auto endIt = toSort.begin();
+      std::advance(endIt, end + 1);
+
+      std::sort(beginIt, endIt);
+    }
   }
 
   void merge(std::vector<int>& toSort, std::vector<int>& temp, const std::size_t& cbegin, const std::size_t& cmid, const std::size_t& cend) {
@@ -41,6 +46,7 @@ namespace {
     std::size_t begin = cbegin;
     std::size_t mid = cmid;
 
+    // Perform merge step
     for (std::size_t cur = cbegin; cur <= cend; ++cur) {
       if (begin == cmid) {
         toSort[cur] = temp[mid++];
