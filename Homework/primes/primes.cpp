@@ -19,22 +19,21 @@ bool is_prime(int n) {
   return true;
 }
 
-
 int main() {
-  using FutureOfPrimes = future<std::vector<int>>;
+  using future_of_primes = future<std::vector<int>>;
 
-  const unsigned int threadCount = std::thread::hardware_concurrency() * 5;
+  const unsigned int thread_count = std::thread::hardware_concurrency() * 5;
   const unsigned int elements = 1'000'000;
-  const unsigned int threadUnit = elements / threadCount;
+  const unsigned int thread_unit = elements / thread_count;
 
-  std::vector<FutureOfPrimes> futures;
+  std::vector<future_of_primes> futures;
 
   try {
-    for (unsigned int i = 0; i < threadCount; ++i) {
-      auto future = queue_work([i, &threadUnit] {
-	      std::vector<int> vec;
+    for (unsigned int i = 0; i < thread_count; ++i) {
+      auto future = queue_work([i, &thread_unit] {
+	      std::vector<int> vec(thread_unit);
 
-	      for (unsigned int k = i * threadUnit; k < (i + 1) * threadUnit; ++k) {
+	      for (unsigned int k = i * thread_unit; k < (i + 1) * thread_unit; ++k) {
           if (is_prime(k)) {
             vec.push_back(k);
           }
@@ -44,11 +43,11 @@ int main() {
       futures.push_back(std::move(future));
     }
 
-    future<std::vector<FutureOfPrimes>> result = when_all(futures.begin(), futures.end());
+    future<std::vector<future_of_primes>> result = when_all(futures.begin(), futures.end());
     
     for (auto&& future : result.get()) {
-      for (auto&& primeNum : future.get()) {
-        std::cout << primeNum << std::endl;
+      for (auto&& prime_num : future.get()) {
+        std::cout << prime_num << std::endl;
       }
     }
   } catch (std::system_error &ex) {

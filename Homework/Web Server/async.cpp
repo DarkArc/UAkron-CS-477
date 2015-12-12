@@ -33,7 +33,7 @@ namespace cs477 {
           });
         } catch (...) {
           // Write the response (not found/something bad happened)
-          auto rsp = make_response(status, {});
+          auto rsp = make_response(404, {});
           cs477::net::write_http_response_async(sock, rsp);
         }
 
