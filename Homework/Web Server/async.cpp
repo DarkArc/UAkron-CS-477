@@ -24,16 +24,20 @@ namespace cs477 {
         auto file_dir = base_dir + sanatize(rq.url);
 
         try {
-          cs477::read_file_async(file_dir.c_str()).then([sock](auto f) {
+          cs477::read_file_async(file_dir.c_str()).then([sock, file_dir](auto f) {
             auto docBody = f.get();
 
+            // Discover file type
+            std::smatch sm;
+            std::regex_match(file_dir, sm, std::regex(".*\\.([A-Za-z0-9 ]+)$"));
+
             // Write the response (successfully, w/ body)
-            auto rsp = make_response(200, docBody);
+            auto rsp = make_response(200, sm[1], docBody);
             cs477::net::write_http_response_async(sock, rsp);
           });
         } catch (...) {
           // Write the response (not found/something bad happened)
-          auto rsp = make_response(404, {});
+          auto rsp = make_response(404, {},  {});
           cs477::net::write_http_response_async(sock, rsp);
         }
 
