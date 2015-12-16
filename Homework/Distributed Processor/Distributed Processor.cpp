@@ -4,6 +4,7 @@
 #include "stdafx.h"
 
 #include <algorithm>
+#include <cmath>
 
 #include "../Distributed Driver/Shared Data.h"
 
@@ -24,10 +25,10 @@ int main() {
 
   // Create shared resources.
 
-  rq_queue = std::shared_ptr<bounded_queue<shared_prime_request, PRIMES_QUEUE_SIZE>>();
+  rq_queue = std::make_shared<bounded_queue<shared_prime_request, PRIMES_QUEUE_SIZE>>();
   rq_queue->create("primes-rq-queue");
 
-  rp_queue = std::shared_ptr<bounded_queue<shared_prime_reply<PRIMES_PER_PROCESS>, PRIMES_QUEUE_SIZE>>();
+  rp_queue = std::make_shared<bounded_queue<shared_prime_reply<PRIMES_PER_PROCESS>, PRIMES_QUEUE_SIZE>>();
   rp_queue->create("primes-rp-queue");
 
   // Setup constants
@@ -46,7 +47,7 @@ int main() {
     try {
       for (unsigned int i = request_index; i < thread_count + request_index; ++i) {
         auto future = queue_work([i, &thread_unit] {
-          std::vector<int> vec(thread_unit);
+          std::vector<int> vec;
 
           for (unsigned int k = i * thread_unit; k < (i + 1) * thread_unit; ++k) {
             if (is_prime(k)) {
@@ -62,10 +63,13 @@ int main() {
 
       shared_prime_reply<PRIMES_PER_PROCESS> response_val;
 
+      auto it = response_val.begin();
       for (auto&& future : result.get()) {
-        auto&& res = future.get();
-        std::copy(res.begin(), res.end(), response_val.end());
+        auto res = future.get();
+        std::copy(res.begin(), res.end(), it);
+        std::advance(it, res.size());
       }
+      *it = 0;
 
       rp_queue->write(response_val);
     } catch (std::system_error &ex) {

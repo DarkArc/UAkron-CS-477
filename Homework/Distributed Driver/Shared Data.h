@@ -2,8 +2,8 @@
 
 #include <array>
 
-#define PRIMES_QUEUE_SIZE 1
-#define PRIMES_PER_PROCESS 10
+#define PRIMES_QUEUE_SIZE 100
+#define PRIMES_PER_PROCESS 100000
 
 namespace cs477 {
   using shared_prime_request = unsigned int;

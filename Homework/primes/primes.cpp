@@ -6,6 +6,7 @@
 #include <thread>
 #include <vector>
 #include <iostream>
+#include <cmath>
 
 #include "../../class-common/include/thread.h"
 
@@ -31,7 +32,7 @@ int main() {
   try {
     for (unsigned int i = 0; i < thread_count; ++i) {
       auto future = queue_work([i, &thread_unit] {
-	      std::vector<int> vec(thread_unit);
+	      std::vector<int> vec;
 
 	      for (unsigned int k = i * thread_unit; k < (i + 1) * thread_unit; ++k) {
           if (is_prime(k)) {
